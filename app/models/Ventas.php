@@ -154,6 +154,7 @@ class Ventas
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $data = [];
+        /*
         $query ="SELECT 
         " . $_ENV['BD_VENTA'] . ".cantidad, 
         " . $_ENV['BD_VENTA'] . ".fecha_venta, 
@@ -165,7 +166,7 @@ class Ventas
         JOIN " . $_ENV['BD_PRODUCTOS'] . " ON " . $_ENV['BD_VENTA'] . ".id_arma = " . $_ENV['BD_PRODUCTOS'] . ".id 
         JOIN " . $_ENV['BD_USUARIOS'] . " ON " . $_ENV['BD_VENTA'] . ".id_usuario = " . $_ENV['BD_USUARIOS'] . ".id 
         WHERE " . $_ENV['BD_VENTA'] . ".id_usuario = :id_usuario";
-        
+        */
         $query = "SELECT 
         " . $_ENV['BD_VENTA'] . ".cantidad, 
         " . $_ENV['BD_VENTA'] . ".fecha_venta, 

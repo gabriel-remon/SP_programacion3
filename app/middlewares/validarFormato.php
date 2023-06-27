@@ -10,17 +10,17 @@ class validarFormato
         $res = new ResponseMW();
         $body = $req->getParsedBody();
 
-        if (isset($body['sector'])) {
-            $body['sector'] = strtolower($body['sector']);
-            if (in_array($body['sector'], explode(',', $_ENV['SECTORES']))) {
+        if (isset($body['tipo'])) {
+            $body['tipo'] = strtolower($body['tipo']);
+            if (in_array($body['tipo'], explode(',', $_ENV['TIPOS']))) {
                 $newReq = $req->withParsedBody($body);
                 $res = $handler->handle($newReq);
             } else {
-                $res->getBody()->write('el sector ingresado no es valido');
+                $res->getBody()->write('el tipo ingresado no es valido');
                 $res = $res->withStatus(404);
             }
         } else {
-            $res->getBody()->write('no se encontro el parametro sector en el body');
+            $res->getBody()->write("no se encontro el parametro 'tipo' sector en el body");
             $res = $res->withStatus(404);
         }
 
@@ -71,9 +71,6 @@ class validarFormato
             isset($body['tipo'])
         ) {
             if ($body['tipo'] == 'comprador' || $body['tipo'] == 'vendedor') {
-
-
-                
                 $res = $handler->handle($req);
             } else {
                 $error = 'el tipo solo puede ser comprador o vendedor';
@@ -102,7 +99,15 @@ class validarFormato
             isset($body['fecha_inicio']) &&
             isset($body['fecha_fin']) 
         ) {
+
+            if (new DateTime($body['fecha_inicio']) <= new DateTime($body['fecha_inicio'])) {
                 $res = $handler->handle($req);
+            } 
+            else {
+                $error = 'la fecha de inicio no puede ser antes que la fecha final';
+                $status = 404;
+            }
+            
         } else {
             $error = 'no se encontraron los parametros';
             $status = 404;
@@ -124,30 +129,38 @@ class validarFormato
         $foto = $req->getUploadedFiles();
         $error = null;
         $status = 500;
+
         if (
             isset($body['id_arma'])&&
-            isset($foto['url_foto'])&&
+            isset($req->getUploadedFiles()['url_foto'])&&
             isset($body['cantidad'])
-        ) {
-
-            if (intval($body['cantidad']) > 0){
+            ) {
+                
+                if (intval($body['cantidad']) > 0){
+                $foto = $req->getUploadedFiles()['url_foto'];
                 $nombreArchivo = $foto->getClientFilename();
                 $infoArchivo = pathinfo($nombreArchivo);
                 $extension = $infoArchivo['extension'];
                 if($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png'){
                     $res = $handler->handle($req);
                 }else{
-                    $res->getBody()->write('la foto solo puede ser jpg , jpeg ,png)');
-                    $res = $res->withStatus(404);
+                    $error = 'la foto solo puede ser jpg , jpeg ,png)';
+                    $status = 404;
                 }
             }else {
-                $res->getBody()->write('la cantidad tiene que ser mayor a 0');
-                $res = $res->withStatus(404);
+                $error = 'la cantidad tiene que ser mayor a 0';
+                $status = 404;
             }
         } else {
-            $res->getBody()->write('no se encontraron los parametros');
-            $res = $res->withStatus(404);
+            $error = 'no se encontraron los parametros';
+            $status = 404;
         }
+
+        if(isset($error)){
+            $res->getBody()->write($error);
+            $res= $res->withStatus($status);
+        }
+
         return $res;
     }
     /*

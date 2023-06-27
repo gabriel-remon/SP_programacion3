@@ -30,15 +30,17 @@ class routerVentas
 
             if ( $foto && $foto->getError() === UPLOAD_ERR_OK) {
                 $directorioDestino = 'FotosArma2023/' .  $arma->nombre .'_'.$usuario->nombre. '_' . str_replace([':', ' '], ['.', '_'], $newVenta->fecha_venta). '.'.$extension;
-                $foto->moveTo(__DIR__ . '/../' . $directorioDestino);
+                //$foto->moveTo(__DIR__ . '/../' . $directorioDestino);
 
                 $newVenta->url_foto = $directorioDestino;
+                
                 $newid = $newVenta->altaVenta($dataJwt->id,$directorioDestino);
                 if ($newid > -1) {
+                    $foto->moveTo(__DIR__ . '/../' . $directorioDestino);
                     $message = 'arma creada con exito id: ' . $newid;
                     $status = 200;
                 } else {
-                    $message = 'no se creo el usuario';
+                    $message = 'no se creo la venta';
                     $status = 500;
                 }
             }

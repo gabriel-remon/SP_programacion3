@@ -77,7 +77,7 @@ class Armas
         $consulta->bindValue(':nacionalidad', strtolower($nacionalidad));
         //$consulta->execute();
         if ($consulta->execute()) {
-            $retorno = $consulta->fetchAll();
+            $retorno = $consulta->fetchAll(PDO::FETCH_ASSOC);
         } else {
             $retorno = null;
         }
