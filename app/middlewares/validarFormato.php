@@ -44,7 +44,7 @@ class validarFormato
         ) {
                 $res = $handler->handle($req);
         } else {
-            $error = 'no se encontraron los parametros';
+            $error = 'no se encontraron los parametros precio,nombre o nacionalidad';
             $status = 404;
         }
 
@@ -77,7 +77,7 @@ class validarFormato
                 $status = 404;
             }
         } else {
-            $error = 'no se encontraron los parametros';
+            $error = 'no se encontraron los parametros  email,password ,nombre o tipo';
             $status = 404;
         }
         if (isset($error)) {
@@ -99,8 +99,7 @@ class validarFormato
             isset($body['fecha_inicio']) &&
             isset($body['fecha_fin']) 
         ) {
-
-            if (new DateTime($body['fecha_inicio']) <= new DateTime($body['fecha_inicio'])) {
+            if (new DateTime($body['fecha_inicio']) <= new DateTime($body['fecha_fin'])) {
                 $res = $handler->handle($req);
             } 
             else {
@@ -109,7 +108,7 @@ class validarFormato
             }
             
         } else {
-            $error = 'no se encontraron los parametros';
+            $error = 'no se encontraron los parametros fecha_inicio,fecha_fin o nacionalidad' ;
             $status = 404;
         }
         if (isset($error)) {

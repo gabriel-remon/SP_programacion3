@@ -33,7 +33,7 @@ class Ventas
         $retorno = null;
         $tipo_usuario = Usuarios::obtenerTipo($id_usuario);
 
-        if ($tipo_usuario && $tipo_usuario == 'comprador') {
+        //if ($tipo_usuario && $tipo_usuario == 'comprador') {
             $objAccesoDatos = AccesoDatos::obtenerInstancia();
 
             $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO " . $_ENV['BD_VENTA'] . " (id_usuario, id_arma,cantidad, fecha_venta,url_foto)  
@@ -43,13 +43,15 @@ class Ventas
             $consulta->bindValue(':cantidad', $this->cantidad);
             $consulta->bindValue(':fecha_venta', $this->fecha_venta);
             $consulta->bindValue(':url_foto', $url_foto);
-            if ($consulta->execute()) {
+            $carga = $consulta->execute();
+            
+            if ($carga) {
                 $retorno = $objAccesoDatos->obtenerUltimoId();
                 $this->id = $retorno;
                 $this->id_usuario = $id_usuario;
                 $this->url_foto = $url_foto;
             }
-        }
+        //}
 
         return  $retorno;
     }
