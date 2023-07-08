@@ -51,16 +51,29 @@ class indexRouter{
     });
     
     $app->group('/armas', function ($group){
+        $group->get('/descargar',\routerArmas::class . ':descargarCsv');
        $group->post('[/]',\routerArmas::class . ':Nueva')
        ->add(\validarFormato::class . ':arma')
        ->add(\Logger::validarRoles(['admin']))
        ->add(\Logger::class.':validarJWTUsuario');
-
+       
+       $group->post('/{id}',\routerArmas::class . ':ModificarUno')
+       ->add(\Logger::validarRoles(['admin']))
+       ->add(\Logger::class.':validarJWTUsuario');
+       
        $group->get('[/]',\routerArmas::class . ':TraerTodas');
        $group->get('/nacionalidad/{nacionalidad}',\routerArmas::class . ':TraerPorNacionalidadParams');
-       //$group->get('/nacionalidad',\routerArmas::class . ':TraerPorNacionalidadBody');
+       
        $group->get('/{id}',\routerArmas::class . ':TraerPorId')
        ->add(\Logger::class.':validarJWTUsuario');
+       
+       $group->delete('/borrar',\routerArmas::class . ':borrarUna')
+       ->add(\validarFormato::class . ':registroEliminar')
+       ->add(\Logger::validarRoles(['admin']))
+       ->add(\Logger::class.':validarJWTUsuario');
+       
+      
+
     });
     
 }

@@ -23,7 +23,7 @@ class routerArmas
             $foto = $req->getUploadedFiles()['url_foto'];
 
             if ($foto->getError() === UPLOAD_ERR_OK) {
-                $directorioDestino = 'image/' .  $newUser->nombre . '_' .$newUser->nacionalidad . '.jpg';
+                $directorioDestino = 'image/' .  $newUser->nombre . '_' . $newUser->nacionalidad . '.jpg';
                 $foto->moveTo(__DIR__ . '/../' . $directorioDestino);
 
                 $newUser->url_foto = $directorioDestino;
@@ -64,10 +64,10 @@ class routerArmas
         $status = 500;
 
         try {
-            if(isset($body['nacionalidad'])){
+            if (isset($body['nacionalidad'])) {
                 $message = Armas::obtenerPorNacionalidad(strtolower($body['nacionalidad']));
                 $status = 200;
-            }else{
+            } else {
                 $message = 'no existe el parametro nacionalidad en el body';
                 $status = 200;
             }
@@ -87,8 +87,8 @@ class routerArmas
         $status = 500;
 
         try {
-                $message = Armas::obtenerPorNacionalidad(strtolower(($args['nacionalidad'])));
-                $status = 200;
+            $message = Armas::obtenerPorNacionalidad(strtolower(($args['nacionalidad'])));
+            $status = 200;
         } catch (Exception $e) {
             $message = $e->getMessage();
             $status = 500;
@@ -104,8 +104,8 @@ class routerArmas
         $status = 500;
 
         try {
-                $message = Armas::obtenerProducto($args['id']);
-                $status = 200;
+            $message = Armas::obtenerProducto($args['id']);
+            $status = 200;
         } catch (Exception $e) {
             $message = $e->getMessage();
             $status = 500;
@@ -115,75 +115,120 @@ class routerArmas
 
         return $res;
     }
-    /*
-
-    public function TraerUno($req, $res, $args)
+    public function borrarUna($req, $res, $args)
     {
+        $message = null;
+        $status = 500;
         $body = $req->getParsedBody();
 
-        $usuario = Usuario::validarUsuario($body['email'], $body['password']);
-        //var_dump($usuario);
-        if (isset($usuario) && $usuario->estado) {
-            $token = [
-                'id' => $usuario->id,
-                'sector' => $usuario->sector,
-                'email' => $usuario->email
-            ];
-            $jwt = ControlerJWT::CrearToken($token);
-            $res = $res->withHeader('Set-Cookie', 'jwt=' . $jwt . '; path=/; HttpOnly; Secure; SameSite=Strict');
-            $res->getBody()->write("Bienvenido " . $usuario->nombre);
-            $res = $res->withStatus(200);
-        } else {
-            $res = $res->withStatus(400);
-            $res->getBody()->write('usuario o password incorrectos');
+        try {
+            if (isset($body['id_arma'])) {
+
+                $accion = Armas::borrarProducto($body['id_arma']);
+                if ($accion > 0) {
+                    $message = 'se borro el producto';
+                    $status = 200;
+                } else {
+
+                    $message = 'no se pudo borrar el producto';
+                    $status = 500;
+                }
+            } else {
+                $message = "falta el parametro id_arma";
+                $status = 400;
+            }
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            $status = 500;
         }
+        $res->getBody()->write(json_encode($message));
+        $res = $res->withStatus($status);
+
         return $res;
     }
-
-
-    public function TraerTodos($req, $res, $args)
-    {
-        $usuarios = Usuario::obtenerTodos();
-
-        $res->getBody()->write(json_encode($usuarios));
-        return $res;
-    }
-
-    public function ModificarUno($req, $res, $args)
-    {
-        $body = $req->getParsedBody();
-        $new = new Usuario();
-
-        $new->email = $body['email'];
-        $new->password = $body['password'];
-        $new->nombre = $body['nombre'];
-        $new->fecha_nacimiento = new DateTime($body['fecha_nacimiento']);
-        $new->sector = $body['sector'];
-        $new->estado = $body['estado'];
-
-        $idProduct = Usuario::modificarUsuario($new);
-        $res->getBody()->write('usuario modificado con exito id: ' . $idProduct);
-        return $res;
-    }
-
-    public function BorrarUno($req, $res, $args)
-    {
-        $body = $req->getParsedBody();
-        $eliminado = Usuario::borrarUsuario($body['email']);
-        $res->getBody()->write($eliminado ? 'usuario eliminado' : 'no se pudo eliminar');
-        return $res;
-    }
-    public function logout($req, $res, $args)
+    public function descargarCsv($req, $res, $args)
     {
         try {
-            $res = $res->withHeader('Set-Cookie', 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; HttpOnly; Secure; SameSite=Strict');
-            $res->getBody()->write('Usuario deslogado');
+            
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM " .  $_ENV['BD_PRODUCTOS']);
+            $consulta->execute();
+            $resultados = $consulta->fetchAll(PDO::FETCH_ASSOC);
+            
+            $contenidoCSV = '';
+            $encabezados = array_keys($resultados[0]);
+            $contenidoCSV .= implode(',', $encabezados) . "\n";
+
+            foreach ($resultados as $fila) {
+                $contenidoCSV .= implode(',', $fila) . "\n";
+            }
+
+            $res = $res
+                ->withHeader('Content-Type', 'text/csv')
+                ->withHeader('Content-Disposition', 'attachment; filename="' .  $_ENV['BD_PRODUCTOS'] . '.csv"')
+                ->withBody(new \Slim\Psr7\Stream(fopen('php://temp', 'r+')));
+
+            $res->getBody()->write($contenidoCSV);
             $res = $res->withStatus(200);
         } catch (Exception $e) {
-            $res->getBody()->write('Error: ' . $e->getMessage());
+            $res->getBody()->write($e->getMessage());
             $res = $res->withStatus(500);
         }
         return $res;
     }
-    */
+
+
+    public function ModificarUno($req, $res, $args)
+    {
+        $body = $req->getParsedBody();
+        $message = null;
+        $status = 500;
+        //var_dump($body);
+        ///$newProduct = new Armas();
+        try {
+            $product = Armas::obtenerProducto($args['id']);
+            $directorioDestino =  $product->url_foto;
+
+            if (Armas::exist($args['id'])) {
+                $newProduct = new Armas();
+                $newProduct->id = $args['id'];
+                $newProduct->precio = isset($body['precio']) ? $body['precio'] : null;
+                $newProduct->nombre = isset($body['nombre']) ? strtolower($body['nombre']) : null;
+                $newProduct->nacionalidad = isset($body['nacionalidad']) ? strtolower($body['nacionalidad']) : null;
+                $newProduct->precio = isset($body['precio']) ? $body['precio'] : null;
+                // var_dump($body);
+                if (isset($req->getUploadedFiles()['url_foto'])) {
+                    $foto = $req->getUploadedFiles()['url_foto'];
+                    if ($foto->getError() === UPLOAD_ERR_OK) {
+                        $foto->moveTo(__DIR__ . '/../' . $directorioDestino);
+                    }
+                }
+
+
+                if (Armas::modificarProducto($newProduct)) {
+
+                    $updateProduct = Armas::obtenerProducto($args['id']);
+                    $updateProduct->url_foto = 'image/' .  $updateProduct->nombre . '_' . $updateProduct->nacionalidad . '.jpg';
+
+                    rename(__DIR__ . '/../' . $directorioDestino, __DIR__ . '/../' . $updateProduct->url_foto);
+                    Armas::modificarProducto($updateProduct);
+                    $message = "arma modificada";
+                    $status = 200;
+                } else {
+                    $message = 'no se pudo modificar el producto';
+                    $status = 500;
+                }
+            } else {
+                $message = 'no existe el id ';
+                $status = 500;
+            }
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            $status = 500;
+        }
+
+        $res->getBody()->write($message);
+        $res = $res->withStatus($status);
+        return $res;
+    }
 }

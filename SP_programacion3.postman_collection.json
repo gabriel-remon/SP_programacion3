@@ -1,0 +1,436 @@
+{
+	"info": {
+		"_postman_id": "82928996-1e03-4e48-948b-73e2580ff1f0",
+		"name": "SP_programacion3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "22954644"
+	},
+	"item": [
+		{
+			"name": "singup-usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "comprador3@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "tipo",
+							"value": "comprador",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "1234",
+							"type": "text"
+						},
+						{
+							"key": "nombre",
+							"value": "juan",
+							"type": "text"
+						}
+					]
+				},
+				"url": "localhost:2020/usuarios/singup"
+			},
+			"response": []
+		},
+		{
+			"name": "login-usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "comprador@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "1234",
+							"type": "text"
+						}
+					]
+				},
+				"url": "localhost:2020/usuarios/login"
+			},
+			"response": []
+		},
+		{
+			"name": "login-admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "admin@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": "localhost:2020/usuarios/login"
+			},
+			"response": []
+		},
+		{
+			"name": "nueva-arma",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "precio",
+							"value": "8000",
+							"type": "text"
+						},
+						{
+							"key": "nombre",
+							"value": "sub-PISTOLA2",
+							"type": "text"
+						},
+						{
+							"key": "nacionalidad",
+							"value": "EEUU",
+							"type": "text"
+						},
+						{
+							"key": "url_foto",
+							"type": "file",
+							"src": "/C:/Users/gabriel/Desktop/fotoTest.jpg"
+						}
+					]
+				},
+				"url": "localhost:2020/armas"
+			},
+			"response": []
+		},
+		{
+			"name": "modificar-arma",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "precio",
+							"value": "8000",
+							"type": "text"
+						},
+						{
+							"key": "nombre",
+							"value": "sub-PISTOLA22",
+							"type": "text"
+						},
+						{
+							"key": "nacionalidad",
+							"value": "argentina",
+							"type": "text"
+						},
+						{
+							"key": "url_foto",
+							"type": "file",
+							"src": "/C:/Users/gabriel/Desktop/descarga (1).jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:2020/armas/8",
+					"host": [
+						"localhost"
+					],
+					"port": "2020",
+					"path": [
+						"armas",
+						"8"
+					],
+					"query": [
+						{
+							"key": "nacionalidad",
+							"value": "argentina",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "arma-id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:2020/armas/3"
+			},
+			"response": []
+		},
+		{
+			"name": "arma-nacionalidad",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:2020/armas/nacionalidad/francia"
+			},
+			"response": []
+		},
+		{
+			"name": "nueva-venta",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id_arma",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "url_foto",
+							"type": "file",
+							"src": "/C:/Users/gabriel/Desktop/fotoTest.jpg"
+						},
+						{
+							"key": "cantidad",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": "localhost:2020/venta"
+			},
+			"response": []
+		},
+		{
+			"name": "traer-ventas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:2020/venta"
+			},
+			"response": []
+		},
+		{
+			"name": "traer-usuarios-compra-arma",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "nombre_arma",
+							"value": "pistola",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:2020/venta/usuarios",
+					"host": [
+						"localhost"
+					],
+					"port": "2020",
+					"path": [
+						"venta",
+						"usuarios"
+					],
+					"query": [
+						{
+							"key": "nombre_arma",
+							"value": "pepe",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "traer-ventas-nacionalidad-fecha",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "nacionalidad",
+							"value": "francia",
+							"type": "text"
+						},
+						{
+							"key": "fecha_inicio",
+							"value": "2021-06-30",
+							"type": "text"
+						},
+						{
+							"key": "fecha_fin",
+							"value": "2024-06-28",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:2020/venta/nacionalidad",
+					"host": [
+						"localhost"
+					],
+					"port": "2020",
+					"path": [
+						"venta",
+						"nacionalidad"
+					],
+					"query": [
+						{
+							"key": "nacionalidad",
+							"value": "eeuu",
+							"disabled": true
+						},
+						{
+							"key": "fecha_inicio",
+							"value": "2020-06-01",
+							"disabled": true
+						},
+						{
+							"key": "fecha_fin",
+							"value": "2024-06-01",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "traer-csv-armas",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "nacionalidad",
+							"value": "francia",
+							"type": "text"
+						},
+						{
+							"key": "fecha_inicio",
+							"value": "2021-06-30",
+							"type": "text"
+						},
+						{
+							"key": "fecha_fin",
+							"value": "2024-06-28",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:2020/armas/descargar",
+					"host": [
+						"localhost"
+					],
+					"port": "2020",
+					"path": [
+						"armas",
+						"descargar"
+					],
+					"query": [
+						{
+							"key": "nacionalidad",
+							"value": "eeuu",
+							"disabled": true
+						},
+						{
+							"key": "fecha_inicio",
+							"value": "2020-06-01",
+							"disabled": true
+						},
+						{
+							"key": "fecha_fin",
+							"value": "2024-06-01",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "borrar-arma",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id_arma",
+							"value": "6",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:2020/armas/borrar",
+					"host": [
+						"localhost"
+					],
+					"port": "2020",
+					"path": [
+						"armas",
+						"borrar"
+					],
+					"query": [
+						{
+							"key": "id_arma",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "fecha_inicio",
+							"value": "2020-06-01",
+							"disabled": true
+						},
+						{
+							"key": "fecha_fin",
+							"value": "2024-06-01",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

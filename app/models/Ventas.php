@@ -74,7 +74,7 @@ class Ventas
         $consulta->execute();
         $data = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
-
+        //var_dump($data);
         return $data;
     }
 

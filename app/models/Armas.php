@@ -88,17 +88,17 @@ class Armas
     public static function modificarProducto($newProduct)
     {
         $retorno = false;
-
-        if (Armas::obtenerProducto($newProduct->id)) {
+        $productoAnterior= Armas::obtenerProducto($newProduct->id);
+        if ($productoAnterior) {
             $objAccesoDato = AccesoDatos::obtenerInstancia();
             $consulta = $objAccesoDato->prepararConsulta("UPDATE " . $_ENV['BD_PRODUCTOS'] . " 
                                                         SET precio = :precio, nombre = :nombre, nacionalidad = :nacionalidad, url_foto = :url_foto 
                                                         WHERE id = :id");
 
-            $consulta->bindValue(':precio', $newProduct->precio);
-            $consulta->bindValue(':nombre', $newProduct->nombre, PDO::PARAM_STR);
-            $consulta->bindValue(':nacionalidad',  strtolower($newProduct->nacionalidad));
-            $consulta->bindValue(':url_foto', $newProduct->url_foto);
+            $consulta->bindValue(':precio', $newProduct->precio ?$newProduct->precio  : $productoAnterior->precio);
+            $consulta->bindValue(':nombre', $newProduct->nombre?$newProduct->nombre  : $productoAnterior->nombre);
+            $consulta->bindValue(':nacionalidad',   $newProduct->nacionalidad?strtolower($newProduct->nacionalidad)  : $productoAnterior->nacionalidad );
+            $consulta->bindValue(':url_foto', $newProduct->url_foto?$newProduct->url_foto  : $productoAnterior->url_foto);
             $consulta->bindValue(':id',  $newProduct->id);
             $retorno = $consulta->execute();
         }
@@ -117,11 +117,12 @@ class Armas
      */
     public static function borrarProducto($id)
     {
+        var_dump($id);
         $producto = Armas::obtenerProducto($id);
         $retorno = -1;
         if ($producto) {
             $objAccesoDato = AccesoDatos::obtenerInstancia();
-            $consulta = $objAccesoDato->prepararConsulta("DELETE " . $_ENV['BD_PRODUCTOS'] . "
+            $consulta = $objAccesoDato->prepararConsulta("DELETE FROM " . $_ENV['BD_PRODUCTOS'] . "
                                                          WHERE id = :id");
             $consulta->bindValue(':id', $id);
             $consulta->execute() ? $retorno = $id : $retorno = -2;

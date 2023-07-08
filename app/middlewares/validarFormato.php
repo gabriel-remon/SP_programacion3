@@ -162,71 +162,30 @@ class validarFormato
 
         return $res;
     }
-    /*
-    public static function altaPedido($req, $handler)
+
+    public static function registroEliminar($req, $handler)
     {
-        $res = new ResponseMW();
-        $body = $req->getParsedBody();
-        
-        if(isset($body['numero_mesa'])){
-            $comanda = Mesa::obtenerMesa($body['numero_mesa'],true);
-            if($comanda){
-                
-                if(isset($body['id_producto']) && Producto::exist($body['id_producto'])){
-                    $res = $handler->handle($req);
-                }else{
-                     $res= $res->withStatus(404);
-                    $res->getBody()->write('el producto no existe');
-                    return $res;
-                }
-            }else{
-                 $res= $res->withStatus(404);
-                $res->getBody()->write('La mesa ingresada no se encuentra con una comanda activa');
+        $res = $handler->handle($req);
+        if ($res->getStatusCode() == 200) {
+            $dataJwt = $req->getAttribute('jwt');
+            $body = $req->getParsedBody();
+            var_dump($body['id_arma']);
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+
+            $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO " . $_ENV['BD_REGISTRO'] . " (id_usuario, id_arma,accion, fecha_accion)  
+                                                        VALUES (:id_usuario, :id_arma, :accion, :fecha_accion)   ");
+            $consulta->bindValue(':id_usuario', $dataJwt->id);
+            $consulta->bindValue(':id_arma', $body['id_arma']);
+            $consulta->bindValue(':accion', 'eliminar');
+            $consulta->bindValue(':fecha_accion',date("Y-m-d H:i:s"));
+            $carga = $consulta->execute();
+            
+            if ($carga) {
+                $res->getBody()->write(' se cargo la eliminacion en la base de datos');
             }
-        }else{
-             $res= $res->withStatus(404);
-            $res->getBody()->write('no se encontro el numero de mesa como parametro "numero_mesa"');
-        }
+            $res->getBody()->write('error al guardar el registro');
 
+        }
         return $res;
     }
-
-    public static function prepararPedido($req, $handler)
-    {
-        $res = new ResponseMW();
-        $body = $req->getParsedBody();
-
-        if(!isset($body['id_pedido'])){
-            $error = 'No se encontro el parametro "id_pedido"';
-            $statusError = 404;
-            $res->getBody()->write($error);
-             $res= $res->withStatus($statusError);
-            return $res;
-        }
-
-        $pedido = Pedido::obtenerPedido($body['id_pedido']);
-            
-        if(!isset($pedido)){
-            $error = 'El pedido no esta guardado en la lista de pedidos';
-            $statusError = 500;
-            $res->getBody()->write($error);
-             $res= $res->withStatus($statusError);
-            return $res;
-        }
-
-        if($pedido->estado == 'pendiente' && !isset($body['tiempo_estimado'])){
-            $error = 'No se encontro el parametro "tiempo_estimado"';
-            $statusError = 404;
-            $res->getBody()->write($error);
-             $res= $res->withStatus($statusError);
-            return $res;
-        }
-        
-        
-            
-            $res = $handler->handle($req);
-        
-        return $res;
-    }
-    */
 }

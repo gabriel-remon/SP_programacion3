@@ -43,44 +43,7 @@ class Logger
 
         return $response;
     }
-    /*
-    public static function validarJWTUsuario ($request, $handler) {
-        
-        $cookies = $request->getCookieParams();
-        $token = $cookies['jwt'] ?? null;
-        $error = null;
-        $statusError = 500;
-        //var_dump($jwt);
-        //var_dump('hola');
-        //$authHeader = $request->getHeaderLine('Authorization');
-    
-        if (!$token) {
-            $response = new ResponseMW();
-            $response->getBody()->write('no hay un jwt guardado');
-            return $response->withStatus(401);
-        }
-    
-        //list($token) = sscanf($authHeader, 'Bearer %s');
-        try{
-            $tokenVerificado =  ControlerJWT::VerificarToken($token);
-            $request = $request->withAttribute('jwt', $tokenVerificado);
-            $response = $handler->handle($request);
-        }catch (\Exception $e) {
-            
-            
-            $response = new ResponseMW();
-            $response->getBody()->write('Invalid token');
-            return $response->withStatus(401);
-        }
-    
-        if(isset($error)){
-            $view = $req->getAttribute('view');
-            $res->getBody()->write($view->render('error.twig',['data'=>$error]));
-            $res->withStatus($statusError);
-        }
-
-        return $response;
-    }*/
+   
     public static function validarMesero($request, $handler)
     {
         $dataJwt = $request->getAttribute('jwt');
